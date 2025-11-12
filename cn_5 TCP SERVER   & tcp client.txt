@@ -1,0 +1,100 @@
+TCP <SERVER>
+
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
+#include <arpa/inet.h>
+using namespace std;
+
+int main() {
+    int serverSocket, clientSocket;
+    char buffer[1024];
+    struct sockaddr_in serverAddr, clientAddr;
+    socklen_t addr_size;
+
+    // 1️⃣ Create socket
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        cerr << "Socket creation failed!" << endl;
+        return -1;
+    }
+
+    // 2️⃣ Configure server address
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(8080);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+
+    // 3️⃣ Bind socket to IP and port
+    bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+
+    // 4️⃣ Listen for clients
+    listen(serverSocket, 5);
+    cout << "Server listening on port 8080..." << endl;
+
+    // 5️⃣ Accept client connection
+    addr_size = sizeof(clientAddr);
+    clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &addr_size);
+
+    // 6️⃣ Receive message from client
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    cout << "Client: " << buffer << endl;
+
+    // 7️⃣ Send response
+    strcpy(buffer, "Hello from TCP Server!");
+    send(clientSocket, buffer, strlen(buffer) + 1, 0);
+
+    // 8️⃣ Close sockets
+    close(clientSocket);
+    close(serverSocket);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+TCP CLIent
+
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
+#include <arpa/inet.h>
+using namespace std;
+
+int main() {
+    int clientSocket;
+    char buffer[1024];
+    struct sockaddr_in serverAddr;
+
+    // 1️⃣ Create socket
+    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (clientSocket < 0) {
+        cerr << "Socket creation failed!" << endl;
+        return -1;
+    }
+
+    // 2️⃣ Configure server address
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(8080);
+    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 3️⃣ Connect to server
+    connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+
+    // 4️⃣ Send message
+    strcpy(buffer, "Hello from TCP Client!");
+    send(clientSocket, buffer, strlen(buffer) + 1, 0);
+
+    // 5️⃣ Receive response
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    cout << "Server: " << buffer << endl;
+
+    // 6️⃣ Close connection
+    close(clientSocket);
+
+    return 0;
+}

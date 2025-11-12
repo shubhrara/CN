@@ -1,0 +1,295 @@
+Perfect ✅ — here’s a compact, sorted viva guide with short answers, covering all your practicals neatly grouped by concept.
+This version is exam-ready, so you can skim and memorize quickly.
+
+
+---
+
+🧠 NETWORKING VIVA Q&A (SHORT + SORTED)
+
+
+---
+
+🌐 1. Network Topologies & Transmission Media
+
+Q1. What is a network topology?
+➡ Arrangement of nodes and cables in a network.
+
+Q2. Types of topologies?
+➡ Bus, Star, Ring, Mesh, Hybrid.
+
+Q3. Difference between physical & logical topology?
+➡ Physical = actual layout; Logical = data flow path.
+
+Q4. Advantages of star topology?
+➡ Easy to add/remove devices; fault isolation.
+
+Q5. What is a guided medium?
+➡ Transmission through physical path (Twisted pair, Coaxial, Fiber).
+
+Q6. Unguided medium?
+➡ Wireless — uses air/radio signals.
+
+Q7. Straight vs crossover cable?
+➡ Straight: different devices (PC–Switch); Crossover: same devices (PC–PC).
+
+Q8. Which cable is used in LAN?
+➡ Cat5e/Cat6 twisted pair cable.
+
+
+---
+
+🖧 2. Wired LAN with Layer 2 Switch
+
+Q1. What is a Layer 2 switch?
+➡ Switch that forwards frames using MAC addresses.
+
+Q2. Hub vs Switch?
+➡ Hub broadcasts; Switch sends to specific MAC.
+
+Q3. What is MAC address?
+➡ Unique hardware address for a NIC.
+
+Q4. What tool tests LAN cables?
+➡ Cable tester / Line tester.
+
+Q5. Purpose of IP addressing?
+➡ To uniquely identify devices in a network.
+
+Q6. Use of PING?
+➡ Tests connectivity using ICMP packets.
+
+Q7. What is ARP?
+➡ Resolves IP address to MAC address.
+
+
+---
+
+🌍 3. WAN (Wired + Wireless LAN)
+
+Q1. What is a WAN?
+➡ Network connecting multiple LANs over large area.
+
+Q2. LAN vs WAN?
+➡ LAN = Local; WAN = Wide area via routers.
+
+Q3. What connects LANs in a WAN?
+➡ Routers.
+
+Q4. What is SSID?
+➡ Network name for a Wi-Fi network.
+
+Q5. Access Point vs Router?
+➡ AP connects wireless clients; Router connects networks.
+
+Q6. Protocols used in WAN?
+➡ PPP, MPLS, Frame Relay.
+
+
+---
+
+🚦 4. Routing (RIP / OSPF / BGP)
+
+Q1. What is routing?
+➡ Selecting best path for data transmission.
+
+Q2. Static vs Dynamic routing?
+➡ Static = manual; Dynamic = uses routing protocols.
+
+Q3. RIP stands for?
+➡ Routing Information Protocol.
+
+Q4. Metric used by RIP?
+➡ Hop count.
+
+Q5. OSPF stands for?
+➡ Open Shortest Path First (uses Dijkstra algorithm).
+
+Q6. What is BGP?
+➡ Border Gateway Protocol for inter-AS routing.
+
+Q7. Distance-vector vs Link-state?
+➡ Distance-vector = neighbor info; Link-state = entire topology info.
+
+
+---
+
+💻 5. Socket Programming (TCP / UDP)
+
+Q1. What is a socket?
+➡ Endpoint for communication between processes.
+
+Q2. TCP vs UDP?
+➡ TCP = reliable, connection-oriented; UDP = fast, connectionless.
+
+Q3. What is a port?
+➡ Logical communication endpoint (e.g., 80, 443).
+
+Q4. Functions in TCP socket (C/Java)?
+➡ socket(), bind(), listen(), accept(), connect(), send(), recv().
+
+Q5. Which layer uses ports?
+➡ Transport layer.
+
+Q6. Can two apps use same port?
+➡ No, not on same IP.
+
+
+---
+
+🗣 6. TCP Socket Programs (Hello & File Transfer)
+
+Q1. What happens when TCP client connects?
+➡ 3-way handshake (SYN, SYN-ACK, ACK).
+
+Q2. How is file transfer done?
+➡ Read file, send via socket stream, write on receiver side.
+
+Q3. Buffering?
+➡ Temporary storage before sending data.
+
+Q4. How server handles multiple clients?
+➡ Using threads or select().
+
+
+---
+
+🧩 7. Wireshark Packet Capture
+
+Q1. What is Wireshark?
+➡ Network packet analyzer tool.
+
+Q2. What is a capture filter?
+➡ Defines which packets to record (e.g., tcp port 80).
+
+Q3. Display filter?
+➡ Used after capture (e.g., http).
+
+Q4. TCP Flags?
+➡ SYN (start), ACK (acknowledge), FIN (finish), RST (reset), PSH (push).
+
+Q5. What is a 3-way handshake?
+➡ SYN → SYN-ACK → ACK.
+
+Q6. How to capture only HTTP traffic?
+➡ Filter: tcp.port == 80.
+
+Q7. How to capture HTTPS traffic?
+➡ Filter: tcp.port == 443.
+
+
+---
+
+🌐 8. HTTP, HTTPS, FTP Performance
+
+Q1. HTTP port?
+➡ 80.
+
+Q2. HTTPS port?
+➡ 443.
+
+Q3. FTP ports?
+➡ 20 (data), 21 (control).
+
+Q4. Difference HTTP vs HTTPS?
+➡ HTTPS is encrypted using SSL/TLS.
+
+Q5. FTP modes?
+➡ Active and Passive.
+
+Q6. Why HTTPS is slower?
+➡ Encryption and handshake overhead.
+
+
+---
+
+🔒 9. SSL Protocol
+
+Q1. Full form of SSL?
+➡ Secure Sockets Layer.
+
+Q2. Purpose of SSL?
+➡ Secure data transfer with encryption.
+
+Q3. SSL vs TLS?
+➡ TLS is newer and more secure.
+
+Q4. Which layer does SSL work on?
+➡ Between Transport and Application (session layer conceptually).
+
+
+---
+
+🔐 10. IPsec (ESP & AH)
+
+Q1. What is IPsec?
+➡ Protocol suite for securing IP packets.
+
+Q2. ESP stands for?
+➡ Encapsulating Security Payload — provides encryption & authentication.
+
+Q3. AH stands for?
+➡ Authentication Header — provides authentication only.
+
+Q4. OSI layer?
+➡ Network layer.
+
+
+---
+
+⚙ 11. DHCP Configuration
+
+Q1. DHCP stands for?
+➡ Dynamic Host Configuration Protocol.
+
+Q2. Purpose?
+➡ Automatically assigns IP addresses.
+
+Q3. DHCP process?
+➡ DORA – Discover, Offer, Request, Acknowledge.
+
+Q4. What is a DHCP lease?
+➡ Time period IP is assigned.
+
+Q5. What if DHCP fails?
+➡ APIPA (Automatic Private IP) is assigned (169.254.x.x).
+
+
+---
+
+🌍 12. DNS Lookup
+
+Q1. DNS stands for?
+➡ Domain Name System.
+
+Q2. Purpose of DNS?
+➡ Converts domain names to IP and vice versa.
+
+Q3. Forward lookup?
+➡ Domain → IP.
+
+Q4. Reverse lookup?
+➡ IP → Domain.
+
+Q5. Which protocol DNS uses?
+➡ UDP (port 53), sometimes TCP.
+
+
+---
+
+🧾 Bonus: Wireshark Filters for Viva
+
+Task	Filter Example
+
+Capture TCP	tcp
+Capture HTTP	tcp.port == 80
+Capture HTTPS	tcp.port == 443
+SYN packets	tcp.flags.syn == 1
+RST packets	tcp.flags.reset == 1
+PSH packets	tcp.flags.push == 1
+
+
+
+---
+
+Would you like me to turn this into a printable 2-page revision sheet (PDF) for quick last-minute viva prep?
+It’ll be neatly formatted with color-coded sections and filter tables.

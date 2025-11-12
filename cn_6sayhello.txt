@@ -1,0 +1,431 @@
+//tcp server
+
+
+
+
+
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <unistd.h>
+#include <arpa/inet.h>
+using namespace std;
+
+int main() {
+    int serverSocket, clientSocket;
+    char buffer[1024];
+    struct sockaddr_in serverAddr, clientAddr;
+    socklen_t addr_size;
+
+    // 1️⃣ Create socket
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        cerr << "Socket creation failed!" << endl;
+        return -1;
+    }
+
+    // 2️⃣ Configure address
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(8080);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+
+    // 3️⃣ Bind and listen
+    bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+    listen(serverSocket, 5);
+    cout << "Server listening on port 8080..." << endl;
+
+    // 4️⃣ Accept client connection
+    addr_size = sizeof(clientAddr);
+    clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &addr_size);
+    cout << "Client connected!" << endl;
+
+    // 5️⃣ Exchange Hello messages
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    cout << "Client: " << buffer << endl;
+
+    strcpy(buffer, "Hello from Server!");
+    send(clientSocket, buffer, strlen(buffer) + 1, 0);
+
+    // 6️⃣ Receive file
+    ofstream outfile("received_file.txt", ios::binary);
+    if (!outfile) {
+        cerr << "Error creating output file!" << endl;
+        close(clientSocket);
+        close(serverSocket);
+        return -1;
+    }
+
+    cout << "Receiving file..." << endl;
+    int bytesReceived;
+    while ((bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0) {
+        if (strcmp(buffer, "EOF") == 0) break;  // end signal
+        outfile.write(buffer, bytesReceived);
+    }
+
+    cout << "File received successfully as 'received_file.txt' ✅" << endl;
+
+    outfile.close();
+    close(clientSocket);
+    close(serverSocket);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//client
+
+
+
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include <unistd.h>
+#include <arpa/inet.h>
+using namespace std;
+
+int main() {
+    int clientSocket;
+    char buffer[1024];
+    struct sockaddr_in serverAddr;
+
+    // 1️⃣ Create socket
+    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (clientSocket < 0) {
+        cerr << "Socket creation failed!" << endl;
+        return -1;
+    }
+
+    // 2️⃣ Configure server IP (Replace with your server's LAN IP)
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(8080);
+    serverAddr.sin_addr.s_addr = inet_addr("10.4.0.34"); // ← change this to your SERVER IP  ifconfig
+
+    // 3️⃣ Connect to server
+    if (connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
+        cerr << "Connection failed!" << endl;
+        return -1;
+    }
+    cout << "Connected to server!" << endl;
+
+    // 4️⃣ Exchange Hello messages
+    strcpy(buffer, "Hello from Client!");
+    send(clientSocket, buffer, strlen(buffer) + 1, 0);
+
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    cout << "Server: " << buffer << endl;
+
+    // 5️⃣ Send file
+    string filename = "helli.txt";
+    ifstream infile(filename, ios::binary);
+    if (!infile) {
+        cerr << "File not found!" << endl;
+        close(clientSocket);
+        return -1;
+    }
+
+    cout << "Sending file '" << filename << "'..." << endl;
+
+    while (!infile.eof()) {
+        infile.read(buffer, sizeof(buffer));
+        int bytesRead = infile.gcount();
+        if (bytesRead > 0) {
+            send(clientSocket, buffer, bytesRead, 0);
+        }
+    }
+
+    // Send end-of-file signal
+    strcpy(buffer, "EOF");
+    send(clientSocket, buffer, strlen(buffer) + 1, 0);
+
+    cout << "File sent successfully ✅" << endl;
+
+    infile.close();
+    close(clientSocket);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+
+Sure 👍 Let’s break down your **TCP File Transfer Program** (Server + Client) step by step in simple terms.
+
+---
+
+## ⚙️ Concept Overview
+
+This program implements **TCP-based file transfer** between two systems:
+
+* **Server** → waits for a connection and receives a file
+* **Client** → connects to the server and sends a file
+
+TCP ensures **reliable**, **connection-oriented** communication.
+
+---
+
+## 🖥️ SERVER SIDE EXPLANATION
+
+### 1️⃣ Create Socket
+
+```cpp
+serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+```
+
+* `AF_INET` → IPv4
+* `SOCK_STREAM` → TCP (reliable, connection-oriented)
+* Returns a **socket descriptor** used for communication.
+
+If creation fails → returns `<0`.
+
+---
+
+### 2️⃣ Configure Address
+
+```cpp
+serverAddr.sin_family = AF_INET;
+serverAddr.sin_port = htons(8080);
+serverAddr.sin_addr.s_addr = INADDR_ANY;
+```
+
+* `AF_INET` → IPv4
+* `htons(8080)` → converts port 8080 to network byte order
+* `INADDR_ANY` → accept connection from any IP on this machine
+
+---
+
+### 3️⃣ Bind and Listen
+
+```cpp
+bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+listen(serverSocket, 5);
+```
+
+* `bind()` assigns the IP + port to the socket.
+* `listen()` puts the server into *listening mode* for incoming clients.
+* The number `5` means the server can queue up to 5 pending connections.
+
+---
+
+### 4️⃣ Accept Client
+
+```cpp
+clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &addr_size);
+```
+
+* Waits until a client connects.
+* Returns a new **socket descriptor (`clientSocket`)** for communication with that client.
+
+---
+
+### 5️⃣ Exchange "Hello" Messages
+
+```cpp
+recv(clientSocket, buffer, sizeof(buffer), 0);
+cout << "Client: " << buffer << endl;
+
+strcpy(buffer, "Hello from Server!");
+send(clientSocket, buffer, strlen(buffer) + 1, 0);
+```
+
+* Client sends a greeting first.
+* Server prints it and replies back.
+* Establishes a friendly initial communication check.
+
+---
+
+### 6️⃣ Receive the File
+
+```cpp
+ofstream outfile("received_file.txt", ios::binary);
+while ((bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0) {
+    if (strcmp(buffer, "EOF") == 0) break;
+    outfile.write(buffer, bytesReceived);
+}
+```
+
+* Opens file for writing in binary mode.
+* Keeps receiving chunks of data from the client.
+* Stops when it receives `"EOF"` (End of File marker).
+* Writes received bytes into `received_file.txt`.
+
+---
+
+### 7️⃣ Cleanup
+
+```cpp
+outfile.close();
+close(clientSocket);
+close(serverSocket);
+```
+
+* Closes file and both sockets to free resources.
+
+---
+
+## 💻 CLIENT SIDE EXPLANATION
+
+### 1️⃣ Create Socket
+
+Same as server — creates a TCP socket.
+
+---
+
+### 2️⃣ Configure Server Details
+
+```cpp
+serverAddr.sin_family = AF_INET;
+serverAddr.sin_port = htons(8080);
+serverAddr.sin_addr.s_addr = inet_addr("10.4.0.34");
+```
+
+* Replace `"10.4.0.34"` with your **server’s IP** (use `ifconfig` or `ipconfig` to find it).
+* Port 8080 must match server’s port.
+
+---
+
+### 3️⃣ Connect to Server
+
+```cpp
+connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+```
+
+* Establishes a TCP connection to the server.
+
+---
+
+### 4️⃣ Exchange "Hello" Messages
+
+```cpp
+strcpy(buffer, "Hello from Client!");
+send(clientSocket, buffer, strlen(buffer) + 1, 0);
+recv(clientSocket, buffer, sizeof(buffer), 0);
+cout << "Server: " << buffer << endl;
+```
+
+* Sends greeting and receives acknowledgment from the server.
+
+---
+
+### 5️⃣ Send File
+
+```cpp
+ifstream infile("helli.txt", ios::binary);
+while (!infile.eof()) {
+    infile.read(buffer, sizeof(buffer));
+    int bytesRead = infile.gcount();
+    send(clientSocket, buffer, bytesRead, 0);
+}
+strcpy(buffer, "EOF");
+send(clientSocket, buffer, strlen(buffer) + 1, 0);
+```
+
+* Opens `helli.txt` for reading in binary mode.
+* Reads and sends data in chunks of 1024 bytes.
+* After reaching EOF, sends `"EOF"` to mark the end.
+
+---
+
+### 6️⃣ Close Connection
+
+```cpp
+infile.close();
+close(clientSocket);
+```
+
+---
+
+## 🧩 How It Works (Step-by-Step Flow)
+
+| Step | Server Action                       | Client Action           |
+| ---- | ----------------------------------- | ----------------------- |
+| 1    | Create socket & listen on port 8080 | Create socket           |
+| 2    | Wait for connection                 | Connect to server       |
+| 3    | Accept connection                   | —                       |
+| 4    | Receive "Hello"                     | Send "Hello"            |
+| 5    | Send "Hello"                        | Receive "Hello"         |
+| 6    | Receive file chunks                 | Read file & send chunks |
+| 7    | Detect "EOF" & save file            | Send "EOF"              |
+| 8    | Close sockets                       | Close sockets           |
+
+---
+
+## ⚠️ Important Notes
+
+✅ Run **server first**, then **client**.
+✅ Both must be on the **same network** (LAN/WiFi).
+✅ Update the **server IP** in client code before running.
+✅ To verify file transfer — check for `received_file.txt` on the server.
+✅ Use different filenames if you test repeatedly to avoid overwriting.
+
+---
+
+### 🧠 TL;DR
+
+* Server → waits, receives file, saves as `received_file.txt`
+* Client → connects, sends `helli.txt`, marks end with `"EOF"`
+* Communication → over TCP (reliable, ordered, byte-stream)
+
+---
+
+Would you like me to modify this code to handle **any file type (like images or PDFs)** safely and with **progress display (%)**?
+
+
+"""

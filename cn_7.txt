@@ -1,0 +1,34 @@
+Connection-specific DNS Suffix  . :
+   Link-local IPv6 Address . . . . . : fe80::3a17:9ba5:cddd:15bc%11
+   IPv4 Address. . . . . . . . . . . : 192.168.0.224
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.0.1
+
+paste the ipconfig
+
+tls.handshake.extensions_server_name contains "facebook.com"
+
+copy src and des
+
+tcp and (ip.addr == 192.168.0.224 or ip.addr == 57.144.176.1) #ipv4c
+tcp and (ipv6.addr == 2409:4081:2d85:af61:edcc:9cfb:2a26:1bc7 or ipv6.addr == 2a03:2880:f188:84:face:b00c:0:25de)
+
+copy and keep the command here also keep the count of all tcp packets = 29616
+
+
+////////////
+
+http://example.com
+http://neverssl.com
+in wireshark type http
+
+/////////////
+
+tcp and (ip.addr == 192.168.0.224 or ip.addr == 57.144.176.1) and tcp.flags.syn == 1		225
+
+tcp.flags.push == 1 
+
+or
+
+tcp and (ipv6.addr == 2409:40c2:1001:a6e:55c0:fa00:ac16:6046 or ipv6.addr == 2a03:2880:f0a4:106:face:b00c:0:6206) and tcp.flags.syn == 1
+

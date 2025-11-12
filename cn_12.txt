@@ -1,0 +1,258 @@
+#!/usr/bin/env python3
+import socket
+import ipaddress
+
+def forward_lookup(domain: str):
+    try:
+        ip = socket.gethostbyname(domain)
+        print(f"Domain Name: {domain}\nIP Address: {ip}")
+    except socket.gaierror:
+        print("Error: Host not found (forward lookup failed)")
+
+def reverse_lookup(ip: str):
+    try:
+        # validate IP first
+        ipaddress.ip_address(ip)
+        host, aliases, addrs = socket.gethostbyaddr(ip)
+        print(f"IP Address: {ip}\nHost Name: {host}")
+    except ValueError:
+        print("Error: Invalid IP address format")
+    except socket.herror:
+        print("Error: Host not found (reverse lookup failed)")
+    except socket.gaierror:
+        print("Error: Reverse lookup failed")
+
+def main():
+    print("Choose lookup type:")
+    print("1 - Forward Lookup (Domain -> IP)")
+    print("2 - Reverse Lookup (IP -> Domain)")
+    choice = input("Enter option (1 or 2): ").strip()
+
+    if choice == "1":
+        domain = input("Enter domain (e.g., www.google.com): ").strip()
+        if domain == "":
+            print("Error: Domain cannot be empty")
+        else:
+            forward_lookup(domain)
+    elif choice == "2":
+        ip = input("Enter IP address (e.g., 142.250.190.36): ").strip()
+        if ip == "":
+            print("Error: IP cannot be empty")
+        else:
+            reverse_lookup(ip)
+    else:
+        print("Invalid option. Choose 1 or 2.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+
+Sure 👍 Let’s go through your **DNS Lookup Python Script** step by step — you’ll fully understand how it performs **Forward** and **Reverse DNS Lookups**.
+
+---
+
+## 🌐 Purpose of the Program
+
+This script can perform:
+
+1. **Forward Lookup** → Converts a *domain name* (like `www.google.com`) to its **IP address**.
+2. **Reverse Lookup** → Converts an *IP address* (like `142.250.190.36`) back to its **domain name**.
+
+---
+
+## 🧩 Step-by-Step Explanation
+
+### 🔹 1. Importing Libraries
+
+```python
+import socket
+import ipaddress
+```
+
+* **`socket`** → provides network communication tools, including DNS lookups.
+* **`ipaddress`** → helps validate whether a string is a valid IP (IPv4 or IPv6).
+
+---
+
+### 🔹 2. Forward Lookup Function
+
+```python
+def forward_lookup(domain: str):
+    try:
+        ip = socket.gethostbyname(domain)
+        print(f"Domain Name: {domain}\nIP Address: {ip}")
+    except socket.gaierror:
+        print("Error: Host not found (forward lookup failed)")
+```
+
+#### 🔍 What it does:
+
+* Takes a **domain name** (e.g., `www.google.com`).
+* Uses `socket.gethostbyname(domain)` → asks DNS to resolve it.
+* Prints the resulting **IP address**.
+* If the domain doesn’t exist or network fails, `socket.gaierror` is raised → shows a user-friendly error.
+
+✅ Example:
+
+```
+Enter: www.google.com
+Output: Domain Name: www.google.com
+        IP Address: 142.250.190.36
+```
+
+---
+
+### 🔹 3. Reverse Lookup Function
+
+```python
+def reverse_lookup(ip: str):
+    try:
+        ipaddress.ip_address(ip)  # Validate IP format first
+        host, aliases, addrs = socket.gethostbyaddr(ip)
+        print(f"IP Address: {ip}\nHost Name: {host}")
+    except ValueError:
+        print("Error: Invalid IP address format")
+    except socket.herror:
+        print("Error: Host not found (reverse lookup failed)")
+    except socket.gaierror:
+        print("Error: Reverse lookup failed")
+```
+
+#### 🔍 What it does:
+
+* Takes an **IP address** as input.
+* `ipaddress.ip_address(ip)` → checks if it’s a valid IP (prevents invalid input like “300.0.0.1”).
+* `socket.gethostbyaddr(ip)` → asks DNS for the **domain name** mapped to that IP.
+
+  * Returns `(host, aliases, addrs)` tuple, but we only print `host`.
+* Handles 3 error types:
+
+  * `ValueError` → invalid IP format.
+  * `socket.herror` → reverse lookup failed (no hostname found).
+  * `socket.gaierror` → DNS resolution failed.
+
+✅ Example:
+
+```
+Enter: 142.250.190.36
+Output: IP Address: 142.250.190.36
+        Host Name: del03s07-in-f4.1e100.net
+```
+
+---
+
+### 🔹 4. The Main Function
+
+```python
+def main():
+    print("Choose lookup type:")
+    print("1 - Forward Lookup (Domain -> IP)")
+    print("2 - Reverse Lookup (IP -> Domain)")
+    choice = input("Enter option (1 or 2): ").strip()
+```
+
+* Displays a simple text menu for the user.
+* Takes user input (`1` or `2`) for the lookup type.
+
+---
+
+### 🔹 5. Handling User Choice
+
+```python
+if choice == "1":
+    domain = input("Enter domain (e.g., www.google.com): ").strip()
+    if domain == "":
+        print("Error: Domain cannot be empty")
+    else:
+        forward_lookup(domain)
+elif choice == "2":
+    ip = input("Enter IP address (e.g., 142.250.190.36): ").strip()
+    if ip == "":
+        print("Error: IP cannot be empty")
+    else:
+        reverse_lookup(ip)
+else:
+    print("Invalid option. Choose 1 or 2.")
+```
+
+* If user chooses **1**, ask for a domain → call `forward_lookup()`.
+* If user chooses **2**, ask for an IP → call `reverse_lookup()`.
+* Handles empty or invalid input gracefully.
+
+---
+
+### 🔹 6. Script Entry Point
+
+```python
+if __name__ == "__main__":
+    main()
+```
+
+* Ensures the script runs only when executed directly (not when imported as a module).
+
+---
+
+## ⚙️ Sample Run
+
+### 🧭 Example 1: Forward Lookup
+
+```
+Choose lookup type:
+1 - Forward Lookup (Domain -> IP)
+2 - Reverse Lookup (IP -> Domain)
+Enter option (1 or 2): 1
+Enter domain (e.g., www.google.com): www.google.com
+Domain Name: www.google.com
+IP Address: 142.250.190.36
+```
+
+### 🧭 Example 2: Reverse Lookup
+
+```
+Choose lookup type:
+1 - Forward Lookup (Domain -> IP)
+2 - Reverse Lookup (IP -> Domain)
+Enter option (1 or 2): 2
+Enter IP address (e.g., 142.250.190.36): 142.250.190.36
+IP Address: 142.250.190.36
+Host Name: del03s07-in-f4.1e100.net
+```
+
+---
+
+## 🧠 TL;DR Summary
+
+| Feature          | Function Used            | Description                 |
+| ---------------- | ------------------------ | --------------------------- |
+| Domain → IP      | `socket.gethostbyname()` | Forward DNS lookup          |
+| IP → Domain      | `socket.gethostbyaddr()` | Reverse DNS lookup          |
+| Input validation | `ipaddress.ip_address()` | Ensures IP is valid         |
+| Error handling   | `try/except` blocks      | Prints user-friendly errors |
+
+---
+
+Would you like me to modify this code to also show **multiple IPs (IPv4 + IPv6)** for a domain using `getaddrinfo()`? It’ll make the forward lookup more complete.
+
+
+
+"""

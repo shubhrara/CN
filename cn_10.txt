@@ -1,0 +1,12 @@
+| Field                  | What to Enter                         |
+| ---------------------- | ------------------------------------- |
+| VPN Provider           | Windows (built-in)                    |
+| Connection Name        | test vpn (or any name you like)       |
+| Server name or address | `public-vpn-222.opengw.net`           |
+| VPN Type               | **L2TP/IPsec with pre-shared key**    |
+| Pre-shared key         | `vpn` (most public VPNs use this key) |
+| Type of sign-in info   | Username and password                 |
+| Username               | `vpn`                                 |
+| Password               | `vpn`                                 |
+| Save                   | ✅                                    |
+	

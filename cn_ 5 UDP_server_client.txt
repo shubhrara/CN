@@ -1,0 +1,115 @@
+//udp server 
+
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
+#include <arpa/inet.h>
+using namespace std;
+
+int main() {
+    int serverSocket;
+    char buffer[1024];
+    struct sockaddr_in serverAddr, clientAddr;
+    socklen_t addr_size;
+
+    // Create socket
+    serverSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (serverSocket < 0) {
+        perror("Socket creation failed");
+        return -1;
+    }
+
+    // Configure address
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(8080);
+    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // Bind socket
+    if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
+        perror("Bind failed");
+        close(serverSocket);
+        return -1;
+    }
+
+    cout << "Server waiting for message on port 8080..." << endl;
+
+    // Wait for message
+    addr_size = sizeof(clientAddr);
+    memset(buffer, 0, sizeof(buffer));
+    ssize_t bytesReceived = recvfrom(serverSocket, buffer, sizeof(buffer), 0, (struct sockaddr*)&clientAddr, &addr_size);
+    if (bytesReceived < 0) {
+        perror("recvfrom failed");
+        close(serverSocket);
+        return -1;
+    }
+
+    cout << "Client: " << buffer << endl;
+
+    // Send response
+    strcpy(buffer, "Hello from UDP Server!");
+    sendto(serverSocket, buffer, strlen(buffer) + 1, 0, (struct sockaddr*)&clientAddr, addr_size);
+
+    close(serverSocket);
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//udp client
+
+
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
+#include <arpa/inet.h>
+using namespace std;
+
+int main() {
+    int clientSocket;
+    char buffer[1024];
+    struct sockaddr_in serverAddr;
+    socklen_t addr_size;
+
+    // 1️⃣ Create socket
+    clientSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (clientSocket < 0) {
+        cerr << "Socket creation failed!" << endl;
+        return -1;
+    }
+
+    // 2️⃣ Configure server address
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(8080);
+    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 3️⃣ Send message to server
+    strcpy(buffer, "Hello from UDP Client!");
+    sendto(clientSocket, buffer, strlen(buffer) + 1, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+
+    // 4️⃣ Receive server reply
+    addr_size = sizeof(serverAddr);
+    recvfrom(clientSocket, buffer, sizeof(buffer), 0, (struct sockaddr*)&serverAddr, &addr_size);
+    cout << "Server: " << buffer << endl;
+
+    close(clientSocket);
+    return 0;
+}
